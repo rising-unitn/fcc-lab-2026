@@ -1,0 +1,66 @@
+* Exercise 000 - Install required tools
+  - Description :: Properly install all the required tools or ensure to have an alternative on your machine.
+      
+* Solutions and Instructions
+Suggestion: The following instructions are generic and not intended to be copied/pasted. You are not a robot: be smart and think what you are doing.
+
+** Installing a terminal
+*Windows*
+Modern Windows versions (10 and 11) include the Windows Terminal, which is a powerful terminal emulator that supports multiple tabs, split panes, and various shells (Command Prompt, PowerShell, WSL). You can install it from the Microsoft Store or download it from the official GitHub repository:
+- Microsoft Store: [[https://www.microsoft.com/en-us/p/windows-terminal/9n0dx20hk701]]
+- WinGet: =winget install --id=Microsoft.WindowsTerminal -e=
+
+*Linux*
+Most Linux distributions come with a terminal emulator pre-installed. You can use the default terminal provided by your desktop environment (e.g., GNOME Terminal, Konsole, Xfce Terminal) or install an alternative one if you prefer (e.g., Tilix, Alacritty, Terminator).
+
+*macOS*
+macOS includes the Terminal app by default. If you want a more feature-rich terminal emulator, you can install iTerm2, which is a popular alternative. [[https://iterm2.com/][Link]]
+
+** Installing OpenSSH
+*Windows*
+Several options, ranked in order of the instructor's preference:
+- Option A: Install WSL (Windows Subsystem for Linux). Follow the instructions here: [[https://docs.microsoft.com/en-us/windows/wsl/install][Link]]. Once you have WSL installed, you can use the Linux terminal to access the OpenSSH client, which is pre-installed in most Linux distributions.
+  - We suggest installing Ubuntu, but you can choose any distribution available in the Microsoft Store.
+- Option B: Use the built-in OpenSSH client in Windows 10 and later. You can enable it through the "Optional Features" settings. Follow the instructions here: [[https://learn.microsoft.com/en-us/windows-server/administration/openssh/openssh-overview][Link]]
+  - Note: you need to install the OpenSSH /client/, not /server/; that would be useful only if you want to run an SSH server on your Windows machine, which is not the case for this lab.
+- Option C: Use a third-party SSH client like PuTTY. Download it from the official website: [[https://www.putty.org/][Link]]
+
+*Linux and macOS*
+OpenSSH is typically pre-installed on most Linux distributions and macOS. You can check if it's available by running the following command in your terminal:
+#+begin_src sh
+ssh -V
+#+end_src
+You can use your package manager to install it if it's not already available (weird, but can happen). For example, on Debian-based systems, you can use:
+#+begin_src sh
+sudo apt update
+sudo apt install openssh-client
+#+end_src
+** Installing Git
+*Windows*
+- If you chose option A, follow the instructions for WSL above, and you will have Git available in your Linux terminal.
+- In all other cases, you can install Git for Windows from the official website: [[https://git-scm.com/download/win][Link]]
+
+*Linux*
+- Git is usually pre-installed on most Linux distributions. You can check if it's available by running the following command in your terminal:
+#+begin_src sh
+git --version
+#+end_src
+- If it's not installed, you can use your package manager to install it. For example, on Debian-based systems, you can use:
+#+begin_src sh
+sudo apt update
+sudo apt install git
+#+end_src
+
+*macOS*
+- Git is typically pre-installed on macOS. You can check if it's available by running the following command in your terminal:
+#+begin_src sh
+git --version
+#+end_src
+- If it's not installed, you can install it using Homebrew, a popular package manager for macOS. First, install Homebrew if you haven't already:
+#+begin_src sh
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+#+end_src
+Then, install Git using Homebrew:
+#+begin_src sh
+brew install git
+#+end_src

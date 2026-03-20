@@ -1,0 +1,20 @@
+#+TITLE: Fog and Cloud Computing Lab - A.Y. 2025-2026
+#+AUTHOR: Matteo Franzil, Luis Augusto Dias Knob
+#+EMAIL: matteo.franzil@unitn.it, luisaugusto.diasknob@unitn.it
+
+* Course information
+This repository contains the official code for the following course:
+- Fog and Cloud Computing (Laboratory)
+- Computer Science (Master's degree)
+- Information Engineering and Computer Science Department (DISI)
+- University of Trento
+
+* General information
+- This repository contains the code for the lab exercises of the course. Each lab exercise is contained in a separate folder (e.g., =e000=, =e001=, etc.) and includes a =README.org= file with instructions on how to complete the exercise.
+- If the exercise folder contains only the =README.org=, you should just follow those instructions, while if it contains other files, then you need to =cd= inside the folder and follow the steps from there as they are relative to the specific exercise.
+- Lab exercises are meant to work with the environment students are given access to (as explained in the =Lab00= slide pack). They may work on other environments (e.g., your laptop) but I cannot guarantee the full compatibility. 
+
+* Lab00 - Requirements
+- [[file:code/e000][Exercise 000 - Install required tools]]
+- [[file:code/e001][Exercise 001 - Generate and upload your SSH key]]
+- [[file:code/e002][Exercise 002 - Setup an SSH tunnel and learn about tunneling]]
