@@ -18,3 +18,9 @@ This repository contains the official code for the following course:
 - [[file:code/e000][Exercise 000 - Install required tools]]
 - [[file:code/e001][Exercise 001 - Generate and upload your SSH key]]
 - [[file:code/e002][Exercise 002 - Setup an SSH tunnel and learn about tunneling]]
+* Lab01 - OpenNebula 1
+- [[file:code/e101][Exercise 101 - Create your first VM]]
+- [[file:code/e102][Exercise 102 - Explore OpenNebula with the CLI]]
+- [[file:code/e103][Exercise 103 - Access your VM via SSH]]
+- [[file:code/e104][Exercise 104 - Install Nginx on Alpine]]
+- [[file:code/e105][Exercise 105 - Explore contextualization]]

@@ -1,0 +1,89 @@
+* Exercise 104 - Install Nginx and serve a custom page
+  - Description :: Now that you can reach the VM over SSH and from the browser, install a proper web server and serve a custom HTML page. You will use Nginx on Alpine Linux, configure it minimally, and verify the result through the SOCKS proxy.
+
+* Solutions and Instructions
+
+** Install Nginx
+From inside the Alpine VM SSH session:
+
+#+begin_src sh
+apk update
+apk add nginx
+#+end_src
+
+** Create a custom index page
+Replace the default page with something that identifies the machine:
+
+#+begin_src sh
+INSTANCE_IP=$(ip addr show eth0 | awk '/inet / {print $2}' | cut -d/ -f1)
+
+mkdir -p /var/www/localhost/htdocs
+cat > /var/www/localhost/htdocs/index.html <<EOF
+<!DOCTYPE html>
+<html>
+<head><title>FCC Lab VM</title></head>
+<body>
+  <h1>Hello from $(hostname)</h1>
+  <p>Private IP: $INSTANCE_IP</p>
+  <p>Served by Nginx on Alpine Linux</p>
+</body>
+</html>
+EOF
+#+end_src
+
+** Configure Nginx to serve the page
+The default Alpine Nginx configuration may point to =/usr/share/webapps/= or =/var/www/localhost/=. The simplest approach is to replace the default server block:
+
+#+begin_src sh
+cat > /etc/nginx/http.d/default.conf <<'EOF'
+server {
+    listen 80;
+    server_name _;
+
+    root /var/www/localhost/htdocs;
+    index index.html;
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}
+EOF
+#+end_src
+
+** Start Nginx and enable it at boot
+#+begin_src sh
+rc-service nginx start
+rc-update add nginx default
+#+end_src
+
+Verify it is running:
+
+#+begin_src sh
+rc-service nginx status
+#+end_src
+
+#+begin_example
+ * status: started
+#+end_example
+
+** Test locally from inside the VM
+#+begin_src sh
+wget -qO- http://127.0.0.1
+#+end_src
+
+You should see the HTML you wrote above.
+
+** Verify from your browser through the SOCKS proxy
+With the SOCKS tunnel active and your browser configured as in Exercise 002, navigate to:
+
+#+begin_example
+http://VM_IP
+#+end_example
+
+[[file:nginx-via-socks.png]]
+
+The page should show the hostname and private IP of the Alpine VM.
+
+*IMPORTANT:*
+
+*Keep this VM and Nginx running — they will be used in Exercise 111 when you configure security groups to control access to port 80.*

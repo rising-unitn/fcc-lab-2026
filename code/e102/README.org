@@ -1,0 +1,75 @@
+* Exercise 102 - Explore OpenNebula with the CLI
+  - Description :: OpenNebula CLI gives you more detail and is essential for scripting and troubleshooting. In this exercise you will use the =one*= family of commands on the Azure Lab VM to inspect the resources in your cluster: VMs, images, virtual networks, hosts, and users.
+
+* Solutions and Instructions
+
+** Connect to the Azure Lab VM
+All =one*= commands must be run on the machine where MiniOne is installed, as a user that has the ONE credentials configured — typically =oneadmin=.
+
+SSH into the Azure Lab VM (not into the Alpine VM). To run commands as =oneadmin=:
+
+#+begin_src sh
+sudo -iu oneadmin
+#+end_src
+
+The credentials are loaded automatically from =/var/lib/one/.one/one_auth=.
+
+** List running VMs
+#+begin_src sh
+onevm list
+#+end_src
+
+#+begin_example
+  ID USER     GROUP    NAME              STAT  UCPU    UMEM HOST             TIME
+   1 oneadmin oneadmin e101-alpine       runn     0    256M localhost    0d 00h12
+#+end_example
+
+Note the *ID* column — that is the numeric VM ID. Get the full details of your VM:
+
+#+begin_src sh
+onevm show 1
+#+end_src
+
+Scroll through the output and find the sections *TEMPLATE*, *MONITORING*, and *HISTORY*. The HISTORY section shows which host ran the VM and the start/end timestamps of each scheduling decision.
+
+** Inspect virtual networks
+#+begin_src sh
+onevnet list
+onevnet show VNET_ID
+#+end_src
+
+Identify which virtual network your VM is attached to, and what address range it uses.
+
+** Inspect images and datastores
+#+begin_src sh
+oneimage list
+onedatastore list
+#+end_src
+
+You should see the Alpine image and at least two datastores: one for images and one for the system (running VMs).
+
+** Inspect hosts
+#+begin_src sh
+onehost list
+onehost show HOST_ID
+#+end_src
+
+A MiniOne deployment has a single host (the same machine). Note the allocated and available CPU and memory.
+
+** Inspect users and groups
+#+begin_src sh
+oneuser list
+onegroup list
+oneuser show oneadmin
+#+end_src
+
+** Filter and format output
+All =one*= commands accept =-l= to select columns and =-f= to filter rows. For example, list only your running VMs showing ID, name, state and IP:
+
+#+begin_src sh
+onevm list --filter user=oneadmin -l ID,NAME,STAT,IP
+#+end_src
+
+*IMPORTANT:*
+
+*The CLI always reflects the live state of the cluster, unlike the dashboard which may lag by a few seconds. Use it whenever you need to confirm the exact state of a resource.*

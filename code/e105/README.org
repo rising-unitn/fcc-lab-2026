@@ -1,0 +1,82 @@
+* Exercise 105 - Explore contextualization
+  - Description :: OpenNebula injects configuration into every VM at first boot through a mechanism called contextualization. Starting from OpenNebula 7, contextualization is *ephemeral*: variables are applied at boot and are not persisted as environment variables — the raw data lives in =/mnt/context/context.sh= on a temporary CD-ROM mount. In this exercise you will verify the injected network configuration, add a custom =SET_HOSTNAME= variable via the FireEdge UI, reboot, and confirm the hostname was applied. This prepares the machine for Exercise 110, where you will save it as a golden image.
+
+* Solutions and Instructions
+
+** Verify one-context is installed and active
+SSH into the Alpine VM you created in Exercise 101:
+
+#+begin_src sh
+ssh -i /var/lib/one/.ssh/id_rsa root@VM_IP
+#+end_src
+
+MiniOne ships the Alpine image with =one-context=.
+
+Now verify each value matches the actual OS configuration:
+
+#+begin_src sh
+# IP and gateway should match ETH0_IP / ETH0_GATEWAY
+ip addr show eth0
+ip route show
+
+# DNS should match ETH0_DNS
+cat /etc/resolv.conf
+
+# SSH key should match SSH_PUBLIC_KEY
+cat /root/.ssh/authorized_keys
+#+end_src
+
+** Cross-check with FireEdge
+Open the VM detail page in GUI (*Instances → VMs → your VM*) and go to the *Context* tab. You will see the same variables that are in =context.sh=.
+
+Confirm that:
+- The =ETH0_IP= shown in FireEdge matches =ip addr show eth0=
+- The =SSH_PUBLIC_KEY= matches =/root/.ssh/authorized_keys=
+- The =ETH0_DNS= matches =/etc/resolv.conf=
+
+** Add SET_HOSTNAME to the template context
+Go to GUI and edit the template so the hostname is set automatically on next boot.
+
+In FireEdge open *Templates → VM Templates*, find the Alpine template, and click *Edit*. Go to the *Context* tab and add a custom variable:
+
+[[file:fireedge-context-tab.png]]
+
+#+begin_example
+Key:   SET_HOSTNAME
+Value: e101-alpine
+#+end_example
+
+Save the template.
+
+*Note*: changing a template does not affect already-running VMs. The new context will be applied when the VM is rebooted.
+
+** Reboot the VM
+From the VM shell:
+
+#+begin_src sh
+reboot
+#+end_src
+
+Wait for the VM to reach =RUNNING= again in FireEdge, then reconnect:
+
+#+begin_src sh
+ssh -i /var/lib/one/.ssh/id_rsa root@VM_IP
+#+end_src
+
+You will see the raw variables OpenNebula passed — including your =SET_HOSTNAME= value. Note that these are *not* exported to the shell environment; they are applied by =one-context= scripts at boot.
+
+** Verify in the VM: hostname and network
+
+#+begin_src sh
+# Hostname should match SET_HOSTNAME
+hostname
+
+# Network should still match ETH0_IP
+ip addr show eth0
+#+end_src
+
+#+begin_example
+e101-alpine
+#+end_example
+
+The hostname is now set automatically by OpenNebula on every boot, without manual intervention.
