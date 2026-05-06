@@ -24,3 +24,10 @@ This repository contains the official code for the following course:
 - [[file:code/e103][Exercise 103 - Access your VM via SSH]]
 - [[file:code/e104][Exercise 104 - Install Nginx on Alpine]]
 - [[file:code/e105][Exercise 105 - Explore contextualization]]
+* Lab02 - OpenNebula 2
+- [[file:code/e106][Exercise 106 - Manage the VM lifecycle]]
+- [[file:code/e107][Exercise 107 - Import from the Marketplace]]
+- [[file:code/e108][Exercise 108 - Create a dedicated user]]
+- [[file:code/e109][Exercise 109 - Provision a VM with a context start script]]
+- [[file:code/e110][Exercise 110 - Save a golden image and create a template]]
+- [[file:code/e111][Exercise 111 - Control traffic with Security Groups]]

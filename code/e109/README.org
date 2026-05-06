@@ -1,10 +1,10 @@
 * Exercise 109 - Provision a VM with a context start script
-  - Description :: OpenNebula's contextualization mechanism can run an arbitrary shell script at first boot via the =Start script= field in the template. This lets you provision software automatically without touching the VM manually — the VM configures itself. In this exercise you will use a start script to install Nginx and serve a custom page, then observe the tradeoff: every new VM must run the script from scratch, which motivates the golden image approach in Exercise 110.
+  - Description :: OpenNebula's contextualization mechanism can run an arbitrary shell script at first boot via the =Start script= field in the template. This lets you provision software automatically without touching the VM manually - the VM configures itself. In this exercise you will use a start script to install Nginx and serve a custom page, then observe the tradeoff: every new VM must run the script from scratch, which motivates the golden image approach in Exercise 110.
 
 * Solutions and Instructions
 
 ** Edit the template: add a start script
-In FireEdge navigate to *Templates → VM Templates*, find the Alpine template, clone it, and name the clone =Alpine - NGINX=. click *Update*. Go to the *Advanced options*, than *Context* tab.
+In FireEdge navigate to *Templates -> VM Templates*, find the Alpine template, clone it, and name the clone =Alpine - NGINX=. click *Update*. Go to the *Advanced options*, than *Context* tab.
 
 [[file:fireedge-context-startscript.png]]
 
@@ -29,11 +29,11 @@ rc-update add nginx default
 Save the template.
 
 ** Instantiate a new VM
-Navigate to *Templates → VM Templates*, select the Alpine template, and click *Instantiate*. Name it =e109-alpine=.
+Navigate to *Templates -> VM Templates*, select the Alpine template, and click *Instantiate*. Name it =e109-alpine=.
 
-Watch the state transitions in FireEdge: =PENDING → PROLOG → BOOT → RUNNING=.
+Watch the state transitions in FireEdge: =PENDING -> PROLOG -> BOOT -> RUNNING=.
 
-*Note*: the start script runs during the =RUNNING= phase, after the OS boots. Wait an extra 30–60 seconds after the VM reaches =RUNNING= before trying to connect.
+*Note*: the start script runs during the =RUNNING= phase, after the OS boots. Wait an extra 30-60 seconds after the VM reaches =RUNNING= before trying to connect.
 
 ** Verify Nginx is running without manual intervention
 Open your browser through the SOCKS proxy and navigate to:
@@ -42,7 +42,7 @@ Open your browser through the SOCKS proxy and navigate to:
 http://VM_IP
 #+end_example
 
-You should see the custom page — without ever SSH-ing into the VM.
+You should see the custom page - without ever SSH-ing into the VM.
 
 You can also verify via SSH if needed:
 

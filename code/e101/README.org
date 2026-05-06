@@ -19,7 +19,7 @@ Log in with the credentials that can be found at $HOME/setup/minione.log. The de
 ** Navigate to VM Templates
 After login you will land on the FireEdge dashboard. From the left sidebar, navigate to:
 
-*Templates → VM Templates*
+*Templates -> VM Templates*
 
 [[file:fireedge-templates.png]]
 
@@ -41,10 +41,10 @@ e101-alpine
 Confirm by clicking *Instantiate*.
 
 ** Monitor the lifecycle
-Navigate to *Instances → VMs* and open the detail page of your new VM. Watch the state field update through the following progression:
+Navigate to *Instances -> VMs* and open the detail page of your new VM. Watch the state field update through the following progression:
 
 #+begin_example
-PENDING → PROLOG → BOOT → RUNNING
+PENDING -> PROLOG -> BOOT -> RUNNING
 #+end_example
 
 [[file:fireedge-vm-running.png]]

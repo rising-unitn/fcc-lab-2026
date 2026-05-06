@@ -1,5 +1,5 @@
 * Exercise 111 - Control traffic with Security Groups
-  - Description :: By default every VM in OpenNebula can receive traffic on any port from any source. Security Groups let you define firewall rules at the virtual network level — OpenNebula programs them into the hypervisor's =ebtables=/=iptables= automatically. In this exercise you will spin up an Ubuntu VM running Nginx on port 80 and an Alpine VM as a client. You will create a security group that allows both SSH and HTTP, verify HTTP works, then remove the HTTP rule and observe that traffic is blocked at the hypervisor level.
+  - Description :: By default every VM in OpenNebula can receive traffic on any port from any source. Security Groups let you define firewall rules at the virtual network level - OpenNebula programs them into the hypervisor's =ebtables=/=iptables= automatically. In this exercise you will spin up an Ubuntu VM running Nginx on port 80 and an Alpine VM as a client. You will create a security group that allows both SSH and HTTP, verify HTTP works, then remove the HTTP rule and observe that traffic is blocked at the hypervisor level.
 
 * Solutions and Instructions
 
@@ -26,7 +26,7 @@ Wait ~60 s for the script to complete, then record the IP:
 SERVER_IP = (Network tab of e111-ubuntu-server)
 #+end_example
 
-*Client VM (Alpine)*: instantiate the =alpine-nginx-golden= image from Exercise 110 as =e111-alpine-client=. No extra configuration is needed — Alpine already has =curl= available.
+*Client VM (Alpine)*: instantiate the =alpine-nginx-golden= image from Exercise 110 as =e111-alpine-client=. No extra configuration is needed - Alpine already has =curl= available.
 
 #+begin_example
 CLIENT_IP = (Network tab of e111-alpine-client)
@@ -43,11 +43,11 @@ ssh root@CLIENT_IP
 curl http://SERVER_IP
 #+end_src
 
-You should see the HTML page returned. This is the baseline — no security group is active yet.
+You should see the HTML page returned. This is the baseline - no security group is active yet.
 
 ** Create the security group
 
-Navigate to *Network → Security Groups* and click *Create*.
+Navigate to *Network -> Security Groups* and click *Create*.
 
 [[file:fireedge-sg-list.png]]
 
@@ -57,7 +57,7 @@ Name the group =web-server-sg= and add the following inbound rules:
 |-----------|----------|------|---------|
 | Inbound   | TCP      | 22   | ANY     |
 | Inbound   | TCP      | 80   | ANY     |
-| Inbound   | ICMP     | —    | ANY     |
+| Inbound   | ICMP     | -    | ANY     |
 
 Leave all other traffic as *DROP* (the implicit default when no rule matches).
 
@@ -65,7 +65,7 @@ Save the security group.
 
 ** Attach the security group to the Ubuntu server VM
 
-Go to *Instances → VMs*, select =e111-ubuntu-server=, open the *Network* tab, detach the =default= security group, and attach =web-server-sg=.
+Go to *Instances -> VMs*, select =e111-ubuntu-server=, open the *Network* tab, detach the =default= security group, and attach =web-server-sg=.
 
 [[file:fireedge-sg-attach.png]]
 
@@ -85,7 +85,7 @@ Edit =web-server-sg= and remove the TCP port 80 rule, leaving only SSH and ICMP:
 | Direction | Protocol | Port | Network |
 |-----------|----------|------|---------|
 | Inbound   | TCP      | 22   | ANY     |
-| Inbound   | ICMP     | —    | ANY     |
+| Inbound   | ICMP     | -    | ANY     |
 
 Save the updated security group. From the Alpine client, try again:
 
@@ -94,7 +94,7 @@ curl --max-time 5 http://SERVER_IP
 # expected: curl: (28) Connection timed out after 5000 milliseconds
 #+end_src
 
-A *timeout* — not "connection refused" — confirms the hypervisor is silently dropping the packet before it reaches the VM. =Connection refused= would mean the packet arrived but nothing was listening; =timed out= means it was dropped at the network level.
+A *timeout* - not "connection refused" - confirms the hypervisor is silently dropping the packet before it reaches the VM. =Connection refused= would mean the packet arrived but nothing was listening; =timed out= means it was dropped at the network level.
 
 ** Re-add port 80 and confirm traffic is restored
 

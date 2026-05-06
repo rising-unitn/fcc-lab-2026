@@ -57,7 +57,7 @@ To use the Multi-Account Containers extension to separate the browsing context o
 
 1. Install the Multi-Account Containers extension from the provided link.
 2. Create a new container for your SOCKS proxy usage.
-3. Configure the container’s settings to use the SOCKS proxy address and port you set up earlier.
+3. Configure the container's settings to use the SOCKS proxy address and port you set up earlier.
 
 *** Configuring your browser
 The examples are for a modern version of Firefox.

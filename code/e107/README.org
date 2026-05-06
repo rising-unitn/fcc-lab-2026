@@ -6,7 +6,7 @@
 ** Open the Marketplace in FireEdge
 In the FireEdge dashboard navigate to:
 
-*Storage → Marketplaces*
+*Storage -> Marketplaces*
 
 [[file:fireedge-marketplaces.png]]
 
@@ -33,10 +33,10 @@ Select the *default* image datastore (usually called =default= or =images=) and 
 OpenNebula will start downloading and converting the image in the background. The image state will progress:
 
 #+begin_example
-LOCKED → READY
+LOCKED -> READY
 #+end_example
 
-This can take several minutes depending on the network. You can monitor progress under *Storage → Images*.
+This can take several minutes depending on the network. You can monitor progress under *Storage -> Images*.
 
 ** Verify the image is ready
 Once the state shows =READY=, confirm it is available via CLI as well:
@@ -55,4 +55,4 @@ Note the image ID -- it is available as a base for creating VM templates in subs
 
 *IMPORTANT:*
 
-*Marketplace images count against your datastore quota. Do not import multiple copies of the same image. If you made a mistake, delete the duplicate from Storage → Images before proceeding.*
+*Marketplace images count against your datastore quota. Do not import multiple copies of the same image. If you made a mistake, delete the duplicate from Storage -> Images before proceeding.*

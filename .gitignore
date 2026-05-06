@@ -29,4 +29,10 @@ e*
 !e1*
 .envrc
 .vagrant
+*.log__a
+e*
+!e0*
+!e1*
+.envrc
+.vagrant
 *.log

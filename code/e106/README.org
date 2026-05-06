@@ -1,5 +1,5 @@
 * Exercise 106 - Manage the VM lifecycle
-  - Description :: OpenNebula manages every VM through a well-defined lifecycle: from the moment it is created to the moment it is deleted. Knowing how to move a VM between states — pause it, snapshot its disk, restore from a snapshot, and terminate it cleanly — is a daily skill in cloud operations. In this exercise you will practice these actions on the Alpine Nginx VM from Exercise 105.
+  - Description :: OpenNebula manages every VM through a well-defined lifecycle: from the moment it is created to the moment it is deleted. Knowing how to move a VM between states - pause it, snapshot its disk, restore from a snapshot, and terminate it cleanly - is a daily skill in cloud operations. In this exercise you will practice these actions on the Alpine Nginx VM from Exercise 105.
 
 * Solutions and Instructions
 
@@ -7,7 +7,7 @@
 The states you will interact with most often are:
 
 #+begin_example
-PENDING → PROLOG → BOOT → RUNNING
+PENDING -> PROLOG -> BOOT -> RUNNING
                               │
                     ┌─────────┼──────────┐
                  SUSPEND   POWEROFF   SNAPSHOT
@@ -24,13 +24,13 @@ PENDING → PROLOG → BOOT → RUNNING
 - *SNAPSHOT*: a point-in-time copy of the VM's disk saved as a new image. The VM keeps running.
 
 ** Suspend and resume the VM
-In FireEdge, open *Instances → VMs*, click on the Alpine Nginx VM and find the action buttons.
+In FireEdge, open *Instances -> VMs*, click on the Alpine Nginx VM and find the action buttons.
 
 [[file:fireedge-vm-actions.png]]
 
 Click *Suspend*. The VM state should move to =SUSPENDED= within a few seconds.
 
-Try to reach the Nginx page in your browser — it should time out. Then click *Resume* and wait for =RUNNING= to come back. Refresh the browser; the page should reappear without any changes.
+Try to reach the Nginx page in your browser - it should time out. Then click *Resume* and wait for =RUNNING= to come back. Refresh the browser; the page should reappear without any changes.
 
 ** Poweroff and power on the VM
 Click *Poweroff*. This sends an ACPI shutdown signal to the guest OS, which shuts down cleanly. The state becomes =POWEROFF=.
@@ -58,11 +58,11 @@ ssh -i /var/lib/one/.ssh/id_rsa root@VM_IP
 echo "<h1>BROKEN - this should disappear after restore</h1>" > /var/www/localhost/htdocs/index.html
 #+end_src
 
-Reload the Nginx page in your browser — you should see the broken message.
+Reload the Nginx page in your browser - you should see the broken message.
 
 Now, try to restore the snapshot by clicking *Restore* on the =before-changes= snapshot in the *Snapshot* tab.
 
-The VM will briefly go into =POWEROFF= while the disk is replaced by the snapshot image, then return to =RUNNING=. Refresh the browser — the original page should be back.
+The VM will briefly go into =POWEROFF= while the disk is replaced by the snapshot image, then return to =RUNNING=. Refresh the browser - the original page should be back.
 
 ** Terminate the VM (when you no longer need it)
 When you are done with a VM for good, use *Terminate* (not Poweroff or Suspend). This deletes the VM record and releases its disk back to the datastore.

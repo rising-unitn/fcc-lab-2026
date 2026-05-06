@@ -1,10 +1,10 @@
 * Exercise 108 - Create a dedicated OpenNebula user
-  - Description :: In a real cloud deployment, =oneadmin= is the super-user reserved for platform administration — not for day-to-day usage. OpenNebula supports multi-tenancy through users and groups: each user owns their resources (VMs, images, templates) and is subject to quotas. In this exercise you will create a regular user =labuser=, add them to the =users= group so they can see shared templates and networks, and then log in as that user in FireEdge. All subsequent exercises (109 onwards) should be performed as =labuser=.
+  - Description :: In a real cloud deployment, =oneadmin= is the super-user reserved for platform administration - not for day-to-day usage. OpenNebula supports multi-tenancy through users and groups: each user owns their resources (VMs, images, templates) and is subject to quotas. In this exercise you will create a regular user =labuser=, add them to the =users= group so they can see shared templates and networks, and then log in as that user in FireEdge. All subsequent exercises (109 onwards) should be performed as =labuser=.
 
 * Solutions and Instructions
 
 ** Create the user via FireEdge
-In FireEdge, navigate to *System → Users* and click *Create*.
+In FireEdge, navigate to *System -> Users* and click *Create*.
 
 Fill in the form:
 - *Name*: =fcc2026=
@@ -30,7 +30,7 @@ oneuser list
 The =users= group already has =USE= permission on the shared templates and virtual network added by MiniOne. However, =labuser= also needs =MANAGE= permission on the Alpine template to edit it (e.g., add a context script in Exercise 109), and =USE= on the Alpine image and virtual network. Grant these as =oneadmin= before handing over:
 
 #+begin_src sh
-# IDs may differ — verify with onetemplate list / oneimage list / onevnet list
+# IDs may differ - verify with onetemplate list / oneimage list / onevnet list
 TEMPLATE_ID_ALPINE=$(onetemplate list | awk '/Alpine/ {print $1}')
 IMAGE_ID_ALPINE=$(oneimage list | awk '/Alpine/ {print $1}')
 TEMPLATE_ID_UBUNTU=$(onetemplate list | awk '/Ubuntu/ {print $1}')
@@ -65,7 +65,7 @@ cat .ssh/id_ed25519.pub
 
 For context-based SSH key injection to work, the user's public key must be registered in their profile. In FireEdge:
 
-1. Click on the user avatar (top-right) → *Settings*
+1. Click on the user avatar (top-right) -> *Settings*
 2. Go to *Security* tab
 3. Paste your SSH public key and save
 
@@ -76,7 +76,7 @@ Still as =fcc2026= in the CLI (use =ONE_AUTH=):
 # On the Azure Lab VM
 export ONE_AUTH=$(mktemp)
 echo "fcc2026:FCC2@26" > $ONE_AUTH
-onevm list    # empty — fcc2026 owns no VMs yet
+onevm list    # empty - fcc2026 owns no VMs yet
 oneimage list # only shared images visible
 #+end_src
 

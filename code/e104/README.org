@@ -86,4 +86,4 @@ The page should show the hostname and private IP of the Alpine VM.
 
 *IMPORTANT:*
 
-*Keep this VM and Nginx running — they will be used in Exercise 111 when you configure security groups to control access to port 80.*
+*Keep this VM and Nginx running - they will be used in Exercise 111 when you configure security groups to control access to port 80.*

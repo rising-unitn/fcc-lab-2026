@@ -4,7 +4,7 @@
 * Solutions and Instructions
 
 ** Connect to the Azure Lab VM
-All =one*= commands must be run on the machine where MiniOne is installed, as a user that has the ONE credentials configured — typically =oneadmin=.
+All =one*= commands must be run on the machine where MiniOne is installed, as a user that has the ONE credentials configured - typically =oneadmin=.
 
 SSH into the Azure Lab VM (not into the Alpine VM). To run commands as =oneadmin=:
 
@@ -24,7 +24,7 @@ onevm list
    1 oneadmin oneadmin e101-alpine       runn     0    256M localhost    0d 00h12
 #+end_example
 
-Note the *ID* column — that is the numeric VM ID. Get the full details of your VM:
+Note the *ID* column - that is the numeric VM ID. Get the full details of your VM:
 
 #+begin_src sh
 onevm show 1
