@@ -1,0 +1,83 @@
+* Exercise 108 - Create a dedicated OpenNebula user
+  - Description :: In a real cloud deployment, =oneadmin= is the super-user reserved for platform administration — not for day-to-day usage. OpenNebula supports multi-tenancy through users and groups: each user owns their resources (VMs, images, templates) and is subject to quotas. In this exercise you will create a regular user =labuser=, add them to the =users= group so they can see shared templates and networks, and then log in as that user in FireEdge. All subsequent exercises (109 onwards) should be performed as =labuser=.
+
+* Solutions and Instructions
+
+** Create the user via FireEdge
+In FireEdge, navigate to *System → Users* and click *Create*.
+
+Fill in the form:
+- *Name*: =fcc2026=
+- *Password*: =FCC2@26=
+- *Group*: =users=
+
+Save. The new user will appear in the list with group =users=.
+
+Verify via CLI that the user was created and placed in the correct group:
+
+#+begin_src sh
+sudo -iu oneadmin
+oneuser list
+#+end_src
+
+#+begin_example
+  ID NAME    
+   0 oneadmin         
+   1 serveradmin
+   2 fcc2026       
+#+end_example
+
+The =users= group already has =USE= permission on the shared templates and virtual network added by MiniOne. However, =labuser= also needs =MANAGE= permission on the Alpine template to edit it (e.g., add a context script in Exercise 109), and =USE= on the Alpine image and virtual network. Grant these as =oneadmin= before handing over:
+
+#+begin_src sh
+# IDs may differ — verify with onetemplate list / oneimage list / onevnet list
+TEMPLATE_ID_ALPINE=$(onetemplate list | awk '/Alpine/ {print $1}')
+IMAGE_ID_ALPINE=$(oneimage list | awk '/Alpine/ {print $1}')
+TEMPLATE_ID_UBUNTU=$(onetemplate list | awk '/Ubuntu/ {print $1}')
+IMAGE_ID_UBUNTU=$(oneimage list | awk '/Ubuntu/ {print $1}')
+VNET_ID=$(onevnet list | awk 'NR==2 {print $1}')
+
+onetemplate chmod $TEMPLATE_ID_ALPINE 664   # users group: USE + MANAGE
+oneimage chmod $IMAGE_ID_ALPINE 644         # users group: USE
+onetemplate chmod $TEMPLATE_ID_UBUNTU 664   # users group: USE + MANAGE
+oneimage chmod $IMAGE_ID_UBUNTU 644         # users group: USE
+onevnet chmod $VNET_ID 666           # users group: USE
+#+end_src
+
+** Log out and log in as labuser
+In FireEdge, click on the user avatar (top-right corner) and select *Sign out*.
+
+On the login screen, enter:
+
+- *Username*: =fcc2026=
+- *Password*: =FCC2@26=
+
+You should see the shared Alpine template and the lab virtual network, but no resources owned by =oneadmin=.
+
+** Add your SSH public key to fcc2026
+
+First, create an SSH key pair on your local machine if you don't have one already:
+
+#+begin_src bash
+ssh-keygen
+cat .ssh/id_ed25519.pub 
+#+end_src
+
+For context-based SSH key injection to work, the user's public key must be registered in their profile. In FireEdge:
+
+1. Click on the user avatar (top-right) → *Settings*
+2. Go to *Security* tab
+3. Paste your SSH public key and save
+
+** Verify user isolation
+Still as =fcc2026= in the CLI (use =ONE_AUTH=):
+
+#+begin_src sh
+# On the Azure Lab VM
+export ONE_AUTH=$(mktemp)
+echo "fcc2026:FCC2@26" > $ONE_AUTH
+onevm list    # empty — fcc2026 owns no VMs yet
+oneimage list # only shared images visible
+#+end_src
+
+From this point on, use =fcc2026= credentials for all exercises.
