@@ -1,0 +1,68 @@
+* Exercise 203 - Build a Docker image using a Dockerfile
+- Description :: After completing the last exercise, try to build the very same image but using a Dockerfile instead of creating it from a running container. Understand how and why your image is different from the initial one. Give it a name and a tag and optionally upload it on the public Docker registry. Finally start a container based on the custom image.
+
+* Solutions and Instructions
+** Write a Dockerfile
+You can look at this [[file:Dockerfile][Dockerfile]].
+
+The very first command _must_ be a =FROM=:
+#+BEGIN_EXAMPLE
+FROM <original_image>
+#+END_EXAMPLE
+
+In =<original_image>= we could specify a tag; if not, =latest= is used:
+#+BEGIN_EXAMPLE
+ubuntu
+ubuntu:latest
+ubuntu:24.04
+#+END_EXAMPLE
+
+** Build the image
+#+BEGIN_SRC sh
+export SHORTNAME=figlet-${USER: -3}
+docker build -t $SHORTNAME .
+#+END_SRC
+Notice the "." at the end of the command, which specifies the build context (i.e., the current folder, where the Dockerfile is located). It can be changed to a different path if needed.
+
+A Dockerfile is _always_ needed from where =docker build= is executed, and it must be named =Dockerfile= (or =dockerfile=). If you want to use a different name, you can specify it with the =-f= flag:
+#+BEGIN_SRC sh
+docker build -t $SHORTNAME -f MyDockerfile .
+#+END_SRC
+** List all images
+#+BEGIN_SRC sh
+docker image list
+#+END_SRC
+** Give it a different tag
+The default tag is =latest=; we can specify a different one with the =-t= flag during the build, or we can re-tag an existing image with the =docker tag= command:
+#+BEGIN_SRC sh
+docker tag $SHORTNAME:latest $SHORTNAME:v1
+#+END_SRC
+
+In fact, any image can be re-tagged with a new name and tag, even if it was not built by us:
+#+BEGIN_SRC sh
+docker tag ubuntu:latest myubuntu:blabla
+#+END_SRC
+
+List all images again:
+#+BEGIN_SRC sh
+docker image list
+#+END_SRC
+
+** Upload it to Docker Hub (optional)
+Login into Docker Hub ([[hub.docker.com]]). Register an account if you do not have one, and create a new repository (e.g., =myfiglet=). Then, login from the command line:
+#+BEGIN_SRC sh
+docker login
+#+END_SRC
+
+Push your image using the format =username/repository:tag=:
+#+BEGIN_SRC sh
+docker tag $SHORTNAME:latest mfranzil/myfiglet:v1
+docker push mfranzil/myfiglet:v1
+#+END_SRC
+
+** Start a new container from the new image
+=figlet= utility is already there!
+#+BEGIN_SRC sh
+docker run -it mfranzil/myfiglet:v1
+figlet "Best UniTN course of the year ;D"
+#+END_SRC

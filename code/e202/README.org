@@ -1,0 +1,75 @@
+* Exercise 202 - Build a custom Docker image
+  - Description :: Create a personalised image starting from a generic one. Understand how and why your image is different from the initial one. Play with layers and start a container based on the custom image.
+
+* Solutions and Instructions
+** Start an Ubuntu based image
+#+BEGIN_SRC
+docker run -it ubuntu
+#+END_SRC
+** Try to use the figlet utility
+You should get an error since it is not present on the default Ubuntu container.
+#+BEGIN_SRC sh
+figlet "Fog and Cloud Course"
+#+END_SRC
+** Install a package and use it
+#+BEGIN_SRC sh
+apt update
+apt -y install figlet
+figlet "Fog and Cloud Course"
+exit
+#+END_SRC
+** Show differences from the base image
+#+BEGIN_SRC sh
+export CONTAINER=[YOUR_CONTAINER_ID]
+docker diff $CONTAINER
+#+END_SRC
+** Commit changes creating a new layer and the respective image.
+#+BEGIN_SRC sh
+docker commit [YOUR_CONTAINER_ID]
+#+END_SRC
+You will receive an output like this:
+#+BEGIN_EXAMPLE
+sha256:69ac9893e31f492f2cf30e8b54fb8517813c1fc8ecf9fc57b180604bd82982ea
+#+END_EXAMPLE
+This is the ID of the new image you just created. Look at the available images now.
+#+BEGIN_SRC sh
+docker images
+#+END_SRC
+** Start a new container from that image
+#+BEGIN_SRC sh
+docker run -it [YOUR_IMAGE_ID]
+#+END_SRC
+
+Exit from that container
+#+BEGIN_SRC sh
+exit
+#+END_SRC
+** Give a name to the image
+#+BEGIN_SRC sh
+# This will give a name like figlet-123 to the image, where 123 are the last three digits of your username
+export SHORTNAME=figlet-${USER: -3}
+
+docker tag [YOUR_IMAGE_ID] $SHORTNAME
+#+END_SRC
+Or specify the tag as an extra argument of the commit
+#+BEGIN_SRC sh
+docker commit [YOUR_CONTAINER_ID] $SHORTNAME
+#+END_SRC
+** Look at the available images
+#+BEGIN_SRC sh
+docker images
+#+END_SRC
+** Understand how layers are the building block of images
+Look at the differences between =figlet= image and =ubuntu= image.
+#+BEGIN_SRC sh
+docker inspect ubuntu | jq -C .[].RootFS | cat -n
+docker inspect $SHORTNAME | jq -C .[].RootFS | cat -n
+#+END_SRC
+** Start a container based on that image using name
+#+BEGIN_SRC sh
+docker run -it $SHORTNAME
+#+END_SRC
+** Use the binary that is already available this time
+#+BEGIN_SRC sh
+figlet "Fog and Cloud Course"
+#+END_SRC

@@ -1,0 +1,10 @@
+FROM ubuntu:24.04 AS builder
+RUN apt-get update && apt-get install -y golang-go
+WORKDIR /app
+COPY main.go .
+RUN go build -o hello main.go
+
+FROM ubuntu:24.04
+WORKDIR /app
+COPY --from=builder /app/hello .
+CMD ["./hello"]

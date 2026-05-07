@@ -1,0 +1,6 @@
+FROM ubuntu:24.04 AS single-stage
+RUN apt-get update && apt-get install -y golang-go
+WORKDIR /app
+COPY main.go .
+RUN go build -o hello main.go
+CMD ["./hello"]

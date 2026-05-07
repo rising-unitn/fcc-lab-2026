@@ -31,3 +31,9 @@ This repository contains the official code for the following course:
 - [[file:code/e109][Exercise 109 - Provision a VM with a context start script]]
 - [[file:code/e110][Exercise 110 - Save a golden image and create a template]]
 - [[file:code/e111][Exercise 111 - Control traffic with Security Groups]]
+* Lab03 - Docker 1
+- [[file:code/e200][Exercise 200 - Install and Verify Docker]]
+- [[file:code/e201][Exercise 201 - Hello World with Docker]]
+- [[file:code/e202][Exercise 202 - Build a custom Docker image]]
+- [[file:code/e203][Exercise 203 - Build a Docker image using a Dockerfile]]
+- [[file:code/e204][Exercise 204 - Build a multi-stage Docker image]]

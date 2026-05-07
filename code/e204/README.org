@@ -1,0 +1,49 @@
+* Exercise 204 - Build a multi-stage Docker image
+- Description :: Several =FROM= instructions can be used in a Dockerfile to create a multi-stage build. The build toolchain is kept in an intermediate stage and never shipped, dramatically reducing the final image size. In this exercise you will compile a simple Go application three times, each time adopting a leaner build strategy.
+
+* Solutions and Instructions
+** Look at the Go application
+The application is a minimal Go hello-world program: see [[file:main.go][main.go]].
+
+** Stage 1 - Single-stage build (approx. 1 GB)
+All steps live in a single Ubuntu image: install the Go toolchain, compile, and run.
+See [[file:Dockerfile-1-single][Dockerfile-1-single]].
+#+BEGIN_SRC sh
+docker build -t hello-single -f Dockerfile-1-single .
+docker run --rm hello-single
+docker image ls hello-single
+#+END_SRC
+
+** Stage 2 - Multi-stage build: Ubuntu builder + Ubuntu runner (approx. 450 MB)
+The compiler toolchain is confined to the =builder= stage. Only the compiled binary is copied into a fresh Ubuntu image, so the final layer does not carry any build dependencies.
+See [[file:Dockerfile-2-multi-ubuntu][Dockerfile-2-multi-ubuntu]].
+#+BEGIN_SRC sh
+docker build -t hello-multi-ubuntu -f Dockerfile-2-multi-ubuntu .
+docker run --rm hello-multi-ubuntu
+docker image ls hello-multi-ubuntu
+#+END_SRC
+
+** Stage 3 - Multi-stage build: Ubuntu builder + scratch runner (approx. 19 MB)
+=scratch= is Docker's empty base image. Because there is no OS at all, the binary must be compiled as a fully static executable (=CGO_ENABLED=0=). The result is the smallest possible image.
+See [[file:Dockerfile][Dockerfile]].
+#+BEGIN_SRC sh
+docker build -t hello-scratch .
+docker run --rm hello-scratch
+docker image ls hello-scratch
+#+END_SRC
+
+** Compare all three image sizes
+#+BEGIN_SRC sh
+docker image ls | grep hello
+#+END_SRC
+You should see something similar to:
+#+BEGIN_EXAMPLE
+hello-single          latest    ...    ~1.1GB
+hello-multi-ubuntu    latest    ...    ~450MB
+hello-scratch         latest    ...    ~19MB
+#+END_EXAMPLE
+
+** Clean up
+#+BEGIN_SRC sh
+docker rmi hello-single hello-multi-ubuntu hello-scratch
+#+END_SRC

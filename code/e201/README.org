@@ -1,0 +1,71 @@
+* Exercise 201 - Hello World with Docker
+  - Description :: Start a generic container and practice with the Docker commands we have seen so far.
+    1) Run a =jpetazzo/clock= container
+    2) Try to understand how the startup happens
+    3) Check if the container is in execution (/tip: you may need another shell/)
+    4) List container images
+    5) Practice with =docker logs= and =docker inspect=
+    6) Stop the container
+    7) Show stopped containers
+    8) Remove the container
+    9) Remove the image
+    10) Verify that the container has been removed together with its image
+
+* Solutions and Instructions
+  1) Run a =jpetazzo/clock= container
+     #+BEGIN_SRC sh
+     docker run jpetazzo/clock
+     #+END_SRC
+  2) Try to understand how the startup happens
+     #+BEGIN_EXAMPLE
+     Unable to find image 'jpetazzo/clock:latest' locally
+     latest: Pulling from jpetazzo/clock
+     f531cdc67389: Pull complete
+     Digest: sha256:dc06bbc3744f7200404bff0bbb2516925e7adea115e07de9da8b36bf15fe3dd3
+     Status: Downloaded newer image for jpetazzo/clock:latest
+     Tue Mar 10 09:56:33 UTC 2026
+     Tue Mar 10 09:56:34 UTC 2026
+     Tue Mar 10 09:56:35 UTC 2026
+     Tue Mar 10 09:56:36 UTC 2026
+     ...
+     #+END_EXAMPLE
+  3) Check if the container is in execution (/tip: you may need another shell/)
+     #+BEGIN_SRC sh
+     docker ps
+     #+END_SRC
+  4) List container images
+     #+BEGIN_SRC sh
+     docker images
+     #+END_SRC
+  5) Practice with =docker logs= and =docker inspect=
+     #+BEGIN_SRC sh
+     export CONTAINER=YOUR_CONTAINER_ID
+     docker logs $CONTAINER
+     docker inspect $CONTAINER | jq -C .[] | less -RN
+     docker inspect $CONTAINER | jq -C .[].Path | cat -n
+     docker inspect $CONTAINER | jq -C .[].Args | cat -n
+     docker inspect $CONTAINER | jq -C .[].State | cat -n
+     docker inspect $CONTAINER | jq -C .[].Name | cat -n
+     #+END_SRC
+  6) Stop the container
+     #+BEGIN_SRC sh
+     docker stop $CONTAINER
+     #+END_SRC
+  7) Show stopped containers
+     #+BEGIN_SRC sh
+     docker ps -a
+     #+END_SRC
+  8) Remove the container
+     #+BEGIN_SRC sh
+     docker rm $CONTAINER
+     #+END_SRC
+  9) Remove the image
+     #+BEGIN_SRC sh
+     docker image rm jpetazzo/clock
+     #+END_SRC
+     Or: =docker rmi jpetazzo/clock=
+  10) Verify that the container has been removed together with its image
+      #+BEGIN_SRC sh
+      docker ps
+      docker images
+      #+END_SRC
