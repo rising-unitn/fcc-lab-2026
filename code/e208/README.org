@@ -1,0 +1,27 @@
+* Exercise 208 - Run a custom Docker Service with persistency
+  - Description :: Adapt the last exercise using a Bind mount or a Docker Volume to add persistence.
+
+* Solutions and Instructions
+** Start the custom container with a Bind Mount
+   #+BEGIN_SRC sh
+   docker run -p 8090:80 -d --name cwsp-${USER: -3} -v `pwd`:/usr/share/nginx/html nginx
+   #+END_SRC
+** Browse v1 or v2
+   #+BEGIN_SRC sh
+   curl http://localhost:8090/index-v1.html
+   curl http://localhost:8090/index-v2.html
+   #+END_SRC
+** Browse default index
+   #+BEGIN_SRC
+   curl http://localhost:8090/index.html
+   #+END_SRC
+** Switch the default index between two versions and check
+   #+BEGIN_SRC sh
+   ln -sf index-v2.html index.html
+   curl http://localhost:8090/index.html
+   ln -sf index-v1.html index.html
+   #+END_SRC
+** Check the folder in the container
+   #+BEGIN_SRC sh
+   docker exec -it cwsp-${USER: -3} ls -l /usr/share/nginx/html
+   #+END_SRC

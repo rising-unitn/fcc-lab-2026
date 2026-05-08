@@ -1,0 +1,56 @@
+* Exercise 212 - Create a dedicated network for containers
+- Description :: By default, Docker Compose places all services in a single automatically-created network. This exercise shows how to define explicit named networks and assign each service only to the networks it actually needs, reducing the blast radius of a compromised container.
+
+* Solutions and Instructions
+** Look at the Compose file
+See [[file:docker-compose.yml]].
+
+Two named networks are declared:
+- =frontend= - accessible to containers that need to receive external traffic
+- =backend= - private network shared only between the application and the database
+
+The =db= service is attached *only* to =backend=: it cannot be reached from anything on the =frontend= network. The =wordpress= service sits on *both* networks so it can serve HTTP traffic and reach the database.
+
+** Bring the stack up
+#+BEGIN_SRC sh
+docker-compose up -d
+docker ps
+#+END_SRC
+
+** Inspect the networks
+#+BEGIN_SRC sh
+docker network ls
+#+END_SRC
+You should see =e212_frontend= and =e212_backend= (Compose prefixes network names with the project name).
+
+#+BEGIN_SRC sh
+docker network inspect e212_backend
+#+END_SRC
+Only the =db= and =wordpress= containers should appear there.
+
+** Verify network isolation
+Try to reach the database directly from outside the =backend= network. Start a temporary container on the =frontend= network and try to connect to the database host:
+#+BEGIN_SRC sh
+docker run --rm --network e212_frontend mariadb:10.6.4-focal \
+  mysql -h db -u wordpress -pwordpress wordpress
+#+END_SRC
+The connection should fail - =db= is not reachable from the =frontend= network.
+
+Now try the same from the =backend= network:
+#+BEGIN_SRC sh
+docker run --rm --network e212_backend mariadb:10.6.4-focal \
+  mysql -h db -u wordpress -pwordpress wordpress -e "SHOW TABLES;"
+#+END_SRC
+This time it should succeed.
+
+** Play with Docker's built-in DNS
+Try to ping the database container by name from the =wordpress= container:
+#+BEGIN_SRC sh
+docker exec -it e212_wordpress ping db
+#+END_SRC
+This works because Docker provides an internal DNS resolver that automatically maps service names to their IP addresses within the same network. The =wordpress= container can reach =db= by name because they share the =backend= network.
+
+** Tear down
+#+BEGIN_SRC sh
+docker-compose down --volumes
+#+END_SRC

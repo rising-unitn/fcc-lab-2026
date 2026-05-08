@@ -1,0 +1,40 @@
+* Exercise 200 - Install and Verify Docker
+  - Description :: Verify whether Docker was installed successfully and is working as expected. If not, try to understand what is wrong and fix it.
+* Solutions and Instructions
+** Install Docker
+The VMs come with Docker already pre-installed for you. We followed [[https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository][the official instructions]] to install Docker on the =docker-host= VM, so you can check them out if you want to understand how to do it manually.
+
+Once you have Docker installed, you can verify that it is working by running the following command:
+#+BEGIN_SRC sh
+docker ps
+#+END_SRC
+
+You will likely receive this error:
+#+BEGIN_EXAMPLE
+permission denied while trying to connect to the docker API at unix:///var/run/docker.sock. Is docker daemon running?
+#+END_EXAMPLE
+
+Do not worry: when Docker is installed, it creates a Unix socket at =/var/run/docker.sock= that is owned by the =root= user and the =docker= group. This means that only users with root privileges or users that are part of the =docker= group can access the Docker API and run Docker commands.
+
+To address this issue, you can add your user to the =docker= group with the following command:
+#+BEGIN_SRC sh
+sudo usermod -aG docker $USER
+#+END_SRC
+
+Log out and log back in for the changes to take effect. After that, you should be able to run Docker commands without any issues.
+
+** Test Docker installation
+View installed Docker version:
+#+BEGIN_SRC sh
+docker version
+#+END_SRC
+
+View available images (should be empty):
+#+BEGIN_SRC sh
+docker images
+#+END_SRC
+
+View running containers (should be empty as well):
+#+BEGIN_SRC sh
+docker ps
+#+END_SRC

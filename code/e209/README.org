@@ -1,0 +1,65 @@
+* Exercise 209 - Setup a multi-container WordPress website
+- Description :: Install a fresh WordPress website using raw Docker commands. The setup is composed of two containers: one acting as the frontend (WordPress) and one as the backend (MariaDB database). They will communicate through a dedicated Docker network and use named volumes for persistence.
+
+* Solutions and Instructions
+** Create a dedicated network
+#+BEGIN_SRC sh
+docker network create wordpress-net-${USER: -3}
+#+END_SRC
+
+** Create named volumes for persistence
+#+BEGIN_SRC sh
+docker volume create db-data-${USER: -3}
+docker volume create wp-data-${USER: -3}
+#+END_SRC
+
+** Start the database container
+#+BEGIN_SRC sh
+docker run -d \
+  --name wordpress-db-${USER: -3} \
+  --net wordpress-net-${USER: -3} \
+  -v db-data-${USER: -3}:/var/lib/mysql \
+  -e MYSQL_ROOT_PASSWORD=somewordpress \
+  -e MYSQL_DATABASE=wordpress \
+  -e MYSQL_USER=wordpress \
+  -e MYSQL_PASSWORD=wordpress \
+  mariadb:10.6.4-focal \
+  --default-authentication-plugin=mysql_native_password
+#+END_SRC
+
+Wait a few seconds for the database to initialise before starting WordPress.
+#+BEGIN_SRC sh
+docker logs wordpress-db-${USER: -3}
+#+END_SRC
+
+** Start the WordPress container
+#+BEGIN_SRC sh
+docker run -d \
+  --name wordpress-${USER: -3} \
+  --net wordpress-net-${USER: -3} \
+  -v wp-data-${USER: -3}:/var/www/html \
+  -p 80:80 \
+  -e WORDPRESS_DB_HOST=wordpress-db-${USER: -3} \
+  -e WORDPRESS_DB_USER=wordpress \
+  -e WORDPRESS_DB_PASSWORD=wordpress \
+  -e WORDPRESS_DB_NAME=wordpress \
+  wordpress:latest
+#+END_SRC
+
+** Check running containers
+#+BEGIN_SRC sh
+docker ps
+#+END_SRC
+
+** Proceed with WordPress installation from your browser (not necessary)
+Open =http://localhost= and follow the minimal installation wizard.
+
+** Tear down the stack
+#+BEGIN_SRC sh
+docker stop wordpress-${USER: -3} wordpress-db-${USER: -3}
+docker rm   wordpress-${USER: -3} wordpress-db-${USER: -3}
+docker volume rm db-data-${USER: -3} wp-data-${USER: -3}
+docker network rm wordpress-net-${USER: -3}
+#+END_SRC
+
+Notice how many commands were needed just to bring up a simple WordPress website. In the next exercise we will see how to simplify this process using Docker Compose.

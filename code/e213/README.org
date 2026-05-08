@@ -1,0 +1,76 @@
+* Exercise 213 - Proxy traffic through a container
+
+In this exercise you will add an *nginx reverse proxy* in front of the
+WordPress application.  The proxy is the only container reachable from
+the host. WordPress sits on an internal network and is accessed by
+name thanks to Docker's built-in DNS resolver.
+
+** Architecture
+
+#+BEGIN_SRC
+  Browser --> proxy (nginx, :80) --> wordpress --------> db
+                │ (frontend net)        │ (backend net)
+                └-----------------------┘
+#+END_SRC
+
+- ~proxy~  :: exposed on port 80; forwards requests to =wordpress:80=.
+- ~wordpress~ :: reachable only from ~proxy~ (frontend) and ~db~ (backend).
+- ~db~ :: reachable only from ~wordpress~ (backend).
+
+** Files
+- =docker-compose.yml= - defines the three services and two networks
+- =nginx.conf= - minimal nginx reverse-proxy configuration
+- =.env= - per previous exercises
+
+** Bring the stack up and test
+1. Start the stack:
+   #+BEGIN_SRC shell
+   docker-compose up -d
+   #+END_SRC
+
+2. Open your browser at [[http://localhost]] and complete the WordPress
+   setup wizard as usual.
+
+3. Verify that WordPress is *not* reachable directly from the host:
+   #+BEGIN_SRC shell
+   # This should fail - no port is bound on the host for wordpress
+   curl http://localhost:8080
+   #+END_SRC
+
+4. Inspect the nginx proxy logs to confirm it is forwarding requests:
+   #+BEGIN_SRC shell
+   docker-compose logs -f proxy
+   #+END_SRC
+
+5. Look at the two networks and verify that ~db~ is absent from the
+   frontend network and ~proxy~ is absent from the backend network:
+   #+BEGIN_SRC shell
+   docker network inspect e213_frontend
+   docker network inspect e213_backend
+   #+END_SRC
+
+** Verify network isolation
+Try to reach the database directly from outside the =backend= network. Start a temporary container on the =frontend= network and try to connect to the database host:
+#+BEGIN_SRC sh
+docker run --rm --network e213_frontend mariadb:10.6.4-focal \
+  mysql -h db -u wordpress -pwordpress wordpress
+#+END_SRC
+The connection should fail - =db= is not reachable from the =frontend= network.
+
+You can also try the opposite: start a temporary container on the =backend= network and try to connect to the frontend:
+#+BEGIN_SRC sh
+docker run --rm --network e213_backend ubuntu:24.04 curl http://proxy
+#+END_SRC
+This should also fail - =proxy= is not reachable from the =backend= network.
+
+** Tear down the stack
+#+BEGIN_SRC shell
+docker-compose down
+#+END_SRC
+
+** Questions
+
+1. What would happen if you removed the ~proxy_set_header Host~ line
+   from =nginx.conf=?
+2. Why is it useful to keep the database on the backend network only?
+3. How would you add HTTPS termination at the proxy layer?

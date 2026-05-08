@@ -1,0 +1,46 @@
+* Exercise 206 - Run a Service with Docker
+  - Description :: Using the =nginx= container image at https://hub.docker.com/_/nginx/, set up a simple webserver. Expose its port on the Docker host and connect to it.
+
+    1) Run a =nginx= container in detached mode exposing its service on a random host port
+    2) Check if the container is in execution
+    3) Identify the random port that has been exposed
+    4) Connect with the container web-server using curl on the host
+    5) Connect with the container web-server using a web browser
+    6) How Docker knows the internal container port which is now bound on the random one?
+    7) Practice with docker logs during http server requests
+
+* Solutions and Instructions
+    1) Run a =nginx= container in detached mode exposing its service on a random host port
+       #+BEGIN_SRC sh
+       docker run -P -d --name webserver-${USER: -3} nginx
+       #+END_SRC
+    2) Check if the container is in execution
+       #+BEGIN_SRC sh
+       docker ps
+       #+END_SRC
+    3) Identify the random port that has been exposed
+       #+BEGIN_SRC sh
+       PORT=`docker port webserver-${USER: -3} | sed s/.*://g`
+       echo "You can connect using a browser with: http://localhost:$PORT"
+       #+END_SRC
+    4) Connect with the container web-server using curl on the host
+       #+BEGIN_SRC sh
+       curl http://localhost:$PORT
+       #+END_SRC
+    5) Connect with the container web-server using a web browser
+       1) Setup the socks proxy on your browser
+       2) Use the following URL: =http://localhost:$PORT=. /See above/
+    6) How Docker knows the internal container port (in this case the port 80) which is now bound on the random one?
+       In =Dockerfile= we specify ports to expose using the keyword: =EXPOSE=, see [[https://docs.docker.com/engine/reference/builder/#expose][this reference doc]].
+    7) Practice with docker logs during http server requests
+       /Need to use two different shells or the browser/
+
+       On the second shell
+       #+BEGIN_SRC sh
+       docker logs -f webserver-${USER: -3}
+       #+END_SRC
+
+       on the first one
+       #+BEGIN_SRC sh
+       curl http://localhost:$PORT
+       #+END_SRC

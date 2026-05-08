@@ -1,0 +1,32 @@
+* Exercise 210 - Convert WordPress to Docker Compose
+  - Description :: Install the same WordPress multi-container application from Exercise 209, but this time using Docker Compose. Compare how a single declarative YAML file replaces all the manual =docker run= commands. The stack is composed of two containers: a frontend (WordPress) and a backend (MariaDB database), interconnected through a dedicated network and using persistent named volumes.
+
+  Credits: [[https://github.com/docker/awesome-compose/tree/master/official-documentation-samples/wordpress]]
+  
+* Solutions and Instructions
+** Look at the Docker Compose file
+Look into [[file:docker-compose.yml]] and try to understand the main configurations. Notice how the network, volumes, and environment variables map directly to the =docker run= flags you used in Exercise 209.
+
+** Bring the stack up
+#+begin_src sh
+docker-compose up -d
+#+end_src
+
+** Check running containers
+Look at all the stages in the log and verify which containers are running:
+#+begin_src sh
+docker ps
+#+end_src
+
+** Proceed with WordPress installation from your browser
+Open =http://localhost= and follow the minimal installation wizard.
+
+** Tear down the entire stack
+To destroy a multi-container application:
+#+begin_src sh
+docker-compose down
+# To also remove the volumes (all data will be lost):
+# docker-compose down --volumes
+#+end_src
+
+Congratulations! You just installed your first microservices-based application using Docker Compose ;D

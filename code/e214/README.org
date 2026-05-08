@@ -1,0 +1,81 @@
+* Exercise 214 - Storage configuration on Compose
+
+Docker Compose supports several ways to persist or share data between
+the host and containers.  This exercise explores the two most common
+approaches: *named volumes* (managed by Docker) and *bind mounts*
+(tied to a host path).
+
+** Storage types
+
+| Type          | Location            | Managed by | Typical use                      |
+|---------------+---------------------+------------+----------------------------------|
+| Named volume  | Docker managed path | Docker     | Databases, stateful app data     |
+| Bind mount    | Explicit host path  | You        | Dev files, config injection      |
+| tmpfs mount   | RAM only            | Docker     | Secrets, performance-sensitive   |
+
+In =docker-compose.yml= both types share the same =volumes:= key under
+a service, but their syntax differs:
+
+#+BEGIN_SRC yaml
+volumes:
+  - named_vol:/container/path        # named volume
+  - ./host/path:/container/path      # bind mount
+  - ./host/path:/container/path:ro   # read-only bind mount
+#+END_SRC
+
+** Files
+- =docker-compose.yml= - WordPress stack with a named volume for
+  ~/var/www/html~ and a bind mount for the uploads directory
+- =.env= - database credentials
+
+** Prepare and deploy the stack
+First, create the local =uploads/= directory that will be bind-mounted:
+#+BEGIN_SRC shell
+mkdir -p uploads
+#+END_SRC
+
+Start the stack:
+#+BEGIN_SRC shell
+docker-compose up -d
+#+END_SRC
+** Inspect volumes and test persistence
+- List all Docker volumes and find the ones created for this project:
+   #+BEGIN_SRC shell
+   docker volume ls
+   #+END_SRC
+
+- Inspect the named volume to see where Docker stores the data on disk:
+   #+BEGIN_SRC shell
+   docker volume inspect e214_wp_data
+   docker volume inspect e214_db_data
+   #+END_SRC
+
+- Open [[http://localhost]], complete the WordPress setup and upload an
+   image in the Media Library.
+
+- Verify the uploaded file is immediately visible on the *host*:
+   #+BEGIN_SRC shell
+   ls uploads/
+   #+END_SRC
+
+** Verify data is preserved across restarts
+- Stop the stack *without* removing volumes and restart it:
+   #+BEGIN_SRC shell
+   docker-compose down        # volumes are kept
+   docker-compose up -d
+   #+END_SRC
+   Confirm that WordPress data is still present.
+
+- Now stop and remove *all* volumes:
+   #+BEGIN_SRC shell
+   docker-compose down --volumes
+   docker volume ls           # named volumes should be gone
+   #+END_SRC
+   What happens to the files in the =uploads/= directory on your host?
+
+** Questions
+1. Why does =docker-compose down= keep named volumes but remove the
+   containers?  When would you want the opposite behaviour?
+2. A bind mount was used for the uploads folder.  What is the advantage
+   over a named volume for this particular directory?
+3. In which scenario would a read-only bind mount be appropriate?

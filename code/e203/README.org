@@ -3,9 +3,9 @@
 
 * Solutions and Instructions
 ** Write a Dockerfile
-You can look at this [[file:Dockerfile][Dockerfile]].
+We will use the [[file:Dockerfile][Dockerfile]] you can find in this directory.
 
-The very first command _must_ be a =FROM=:
+The first non-metadata command will (and _must_) be a =FROM=:
 #+BEGIN_EXAMPLE
 FROM <original_image>
 #+END_EXAMPLE
@@ -15,6 +15,29 @@ In =<original_image>= we could specify a tag; if not, =latest= is used:
 ubuntu
 ubuntu:latest
 ubuntu:24.04
+#+END_EXAMPLE
+
+You can preprend metadata wherever you want, but it is common to put it at the beginning of the file:
+#+BEGIN_EXAMPLE
+LABEL org.opencontainers.image.authors="matteo.franzil@unitn.it"
+#+END_EXAMPLE
+
+Finally, let's put actual things inside the Dockerfile:
+#+BEGIN_EXAMPLE
+RUN apt-get update
+RUN apt-get install figlet
+#+END_EXAMPLE
+
+These two commands first update the package list and then install the =figlet= utility.
+*Remember*! This is two separate layers! Running =apt update= will effectively 
+create a layer composed of =apt= cache data, and then =apt install= will create a second layer with the actual installation of =figlet=. This is different from running both commands in the same layer:
+#+BEGIN_EXAMPLE
+RUN apt-get update && apt-get install figlet
+#+END_EXAMPLE
+
+Finally, we put a =RUN= instruction to specify the default command to run when a container is started from this image:
+#+BEGIN_EXAMPLE
+CMD ["figlet", "Hello, Fog and Cloud Computing!"]
 #+END_EXAMPLE
 
 ** Build the image

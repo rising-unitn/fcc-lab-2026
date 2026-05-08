@@ -1,0 +1,58 @@
+* Exercise 207 - Run a custom Service with Docker
+  - Description :: Using the =nginx= container image at https://hub.docker.com/_/nginx/, set up a simple webserver. Replace the nginx default page with custom content. Expose its internal port on port =8080= of the Docker host and connect to it. Finally change the custom content exposed by the webserver.
+
+
+    1) Create a custom =index.html= file
+    2) Create a =Dockerfile=
+    3) Create a custom image based on the =nginx=
+    4) Start the new custom container in detached mode exposing port =8080= on the Docker host
+    5) Check if the container is in execution
+    6) Connect with the container web-server using curl or a web browser
+    7) Modify content of =index.html=
+    8) Check the web-server page now
+    9) Destroy and restart the container
+    10) Check the web-server page now
+    11) How can I persist the state of the latest version of my webserver?
+
+* Solutions and Instructions
+    1) Create a custom =index.html= file\\
+       See [[file:index-v1.html][index-v1.html]] and [[file:index-v2.html]]
+    2) Create a =Dockerfile=
+       See [[file:Dockerfile][Dockerfile]]
+    3) Create a custom image based on the =nginx=
+       #+BEGIN_SRC sh
+       docker build -t cws .
+       #+END_SRC
+    4) Start the new custom container in detached mode exposing port =8080= (each user should use different port) on the Docker host
+       #+BEGIN_SRC sh
+       docker run -p8080:80 -d --name cws-${USER: -3} cws
+       #+END_SRC
+
+    5) Check if the container is running
+       #+BEGIN_SRC sh
+       docker ps
+       #+END_SRC
+    6) Connect with the container web-server using curl or a web browser
+       #+BEGIN_SRC sh
+       curl http://localhost:8080
+       #+END_SRC
+    7) Modify content of =index.html=
+       #+BEGIN_SRC sh
+       docker cp index-v2.html cws-${USER: -3}:/usr/share/nginx/html/index.html
+       #+END_SRC
+    8) Check the web-server page now
+       #+BEGIN_SRC sh
+       curl http://localhost:8080
+       #+END_SRC
+    9) Destroy and restart the container
+       /Let us now assume that for some reason the container must be restarted by an admin, the server hosting the container goes down, or the container restarts due to a fatal application error. Of course we will simulate this bad situation (that honestly in production may appear very frequently) using the following commands:/
+       #+BEGIN_SRC sh
+       docker stop cws-${USER: -3}
+       docker rm cws-${USER: -3}
+       docker run -p8080:80 -d --name cws-${USER: -3} cws
+       #+END_SRC
+    10) Check the web-server page now
+	#+BEGIN_SRC sh
+	curl http://localhost:8080
+	#+END_SRC
+    11) How can I persist the state of the latest version of my webserver?

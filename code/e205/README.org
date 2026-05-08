@@ -1,0 +1,47 @@
+* Exercise 205 - Make two containers talk to each other
+  - Description :: Create a custom bridged network. Create two different containers (a client and a server) and attach them to the same network. Finally use Docker's internal DNS to communicate from one to the other.
+
+* Solutions and Instructions
+** Clear all stopped container (optional)
+   #+BEGIN_SRC sh
+   docker rm $(docker ps -a -q)
+   #+END_SRC
+** Create a custom Docker network
+   Look at the current Linux bridges
+   #+BEGIN_SRC sh
+   brctl show
+   #+END_SRC
+
+   Create the Docker custom network named =mynet-PLACEHOLDER=
+   #+BEGIN_SRC sh
+   docker network create mynet-${USER: -3}
+   #+END_SRC
+
+   Look at the network that has been created
+   #+BEGIN_SRC sh
+   docker network list
+   #+END_SRC
+
+   Look at the Linux bridge that has been created
+   #+BEGIN_SRC sh
+   brctl show
+   #+END_SRC
+
+** Create the server
+   #+BEGIN_SRC sh
+   #docker run -d --net mynet-${USER: -3} --name server-${USER: -3} busybox nc -l 0.0.0.0:7000
+   docker run -d --net mynet-${USER: -3} --name server-${USER: -3} nginx
+   #+END_SRC
+
+** Create the client and test
+   Get your personal placeholder
+   #+BEGIN_SRC sh
+     MY_PH=`echo ${USER: -3}`
+     echo $MY_PH
+   #+END_SRC
+
+   Create the personal client and test on your personal server
+   #+BEGIN_SRC sh
+   #docker run --net mynet-${USER: -3} busybox echo 'PING' | nc server-$MY_PH 7000
+   docker run --net mynet-${USER: -3} busybox wget -S server-$MY_PH:80 -O -
+   #+END_SRC

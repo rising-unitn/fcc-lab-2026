@@ -1,0 +1,36 @@
+* Exercise 211 - Environment files in Compose
+- Description :: Hardcoding credentials inside =docker-compose.yml= is bad practice. In this exercise you will move all sensitive values into a separate =.env= file so that the Compose file itself can be safely committed to version control.
+
+* Solutions and Instructions
+** Look at the files
+- [[file:docker-compose.yml]] - the updated Compose file that references variables instead of hardcoded values
+- [[file:.env]] - the environment file containing the actual credential values
+
+Variables are referenced in Compose with the =${VARIABLE_NAME}= syntax. Docker Compose automatically loads a file named =.env= in the same directory.
+
+** Bring the stack up
+#+BEGIN_SRC sh
+docker-compose up -d
+docker ps
+#+END_SRC
+
+** Verify that variables are resolved correctly
+The =docker-compose config= command prints the final, fully interpolated Compose configuration:
+#+BEGIN_SRC sh
+docker-compose config
+#+END_SRC
+You should see the actual credential values in place of the variable references. This is a great way to debug variable substitution issues.
+
+** Override a variable at runtime
+Variables in =.env= can be overridden by setting them in the shell environment before running Compose:
+#+BEGIN_SRC sh
+MYSQL_ROOT_PASSWORD=myotherpassword docker-compose config
+#+END_SRC
+
+** Tear down
+#+BEGIN_SRC sh
+docker-compose down --volumes
+#+END_SRC
+
+** Security note
+Never commit =.env= files containing real credentials to a public repository. Add =.env= to =.gitignore= and share credentials through a secrets manager or CI/CD secrets instead.

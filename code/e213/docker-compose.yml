@@ -1,0 +1,54 @@
+version: "3"
+services:
+  db:
+    image: mariadb:10.6.4-focal
+    command: '--default-authentication-plugin=mysql_native_password'
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 3306
+      - 33060
+    networks:
+      - backend
+
+  wordpress:
+    image: wordpress:latest
+    volumes:
+      - wp_data:/var/www/html
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - WORDPRESS_DB_HOST=db
+      - WORDPRESS_DB_USER=${MYSQL_USER}
+      - WORDPRESS_DB_PASSWORD=${MYSQL_PASSWORD}
+      - WORDPRESS_DB_NAME=${MYSQL_DATABASE}
+    # WordPress no longer exposes port 80 directly to the host.
+    # All traffic arrives through the nginx proxy.
+    expose:
+      - 80
+    networks:
+      - frontend
+      - backend
+
+  proxy:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - wordpress
+    networks:
+      - frontend
+
+networks:
+  frontend:
+  backend:
+
+volumes:
+  db_data:
+  wp_data:
