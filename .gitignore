@@ -52,4 +52,11 @@ e*
 !e2*
 .envrc
 .vagrant
+*.log__a
+e*
+!e0*
+!e1*
+!e2*
+.envrc
+.vagrant
 *.log
